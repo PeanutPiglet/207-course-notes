@@ -1,5 +1,6 @@
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Exercise (Chapter 7: Collections) — making a class {@code Iterable}.
@@ -34,14 +35,27 @@ public class Week implements Iterable<String> {
 
   @Override
   public Iterator<String> iterator() {
-    // TODO: return an Iterator<String> that yields days[0], days[1], ... in
-    //       order. The usual approach is a small (nested) class that implements
-    //       Iterator<String>:
-    //         - hasNext() reports whether any days remain;
-    //         - next() returns the next day and advances, or throws
-    //           java.util.NoSuchElementException if none remain.
-    //       Replace the empty iterator below with an instance of your class.
-    return Collections.emptyIterator();
+    class WeekIterator implements Iterator<String> {
+      private final String[] days;
+      private int progress = 0;
+
+      public WeekIterator(String[] days){
+        this.days = days.clone();
+      }
+
+      public boolean hasNext() {
+        return progress < 7;
+      }
+
+      public String next() {
+        if (progress >= days.length) {
+          throw new NoSuchElementException("Out of days!");
+        }
+        progress += 1;
+        return days[progress - 1];
+      }
+    }
+    return new WeekIterator(days);
   }
 
   /** Prints each day of the week, one per line. */
